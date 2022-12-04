@@ -5,7 +5,6 @@ import urllib.request
 servico = Flask(__name__)
 
 
-
 MYSQL_SERVER = "localhost"
 MYSQL_USER = "root"
 MYSQL_PASS = "admin"
@@ -19,6 +18,7 @@ def get_conexao_bd():
 
     return conexao
 
+
 def acessar(url):
     resposta = urllib.request.urlopen(url)
     dados = resposta.read()
@@ -26,24 +26,27 @@ def acessar(url):
     return dados.decode("utf-8")
 
 
-
 def gerar_feed(registro):
     feed = {
         "_id": registro["feed_id"],
+
+        "blobs": [
+            {
+                "type": "image",
+                "file": registro["imagem"]
+            }
+        ],
+
+        "description": registro["comentario"],
+
         "authors": {
             "authors_id": registro["authors_id"],
-            "avatar": registro["avatar"],
-            "name": registro["nome_authors"]
-            
-        },
-        "product": {
-            "blobs": [
-                {
-                    "type": "image",
-                    "file": registro["imagem"]
-                }
-            ]
+            "name": registro["nome_authors"],
+            "avatar": registro["avatar"]
+
+
         }
+
     }
 
     return feed
@@ -56,19 +59,22 @@ def get_feeds(pagina):
     conexao = get_conexao_bd()
     cursor = conexao.cursor(dictionary=True)
     cursor.execute(
-        "SELECT feeds.id as feed_id , "+
-        "authors.name as nome_authors , authors.avatar, feeds.comentario, feeds.imagem "+
-        "FROM feeds "+
-        "join authors   on   feeds.authors_id = authors.id "+
-		"ORDER BY feeds.id desc "+
-        "LIMIT  = " + str(5)
+        "SELECT feeds.id as feed_id , " +
+        "authors.name as nome_authors , authors.avatar, feeds.comentario, feeds.imagem, authors.id as authors_id, comentario " +
+        "FROM feeds " +
+        "join authors on feeds.authors_id = authors.id " +
+        "ORDER BY feeds.id desc " +
+        " LIMIT " + str(pagina) +
+        ", " + str(5)
+
+
     )
     registros = cursor.fetchall()
     conexao.close()
 
     for registro in registros:
         feeds.append(gerar_feed(registro))
- 
+
     return jsonify(feeds)
 
 
@@ -79,21 +85,19 @@ def get_feed(feed_id):
     conexao = get_conexao_bd()
     cursor = conexao.cursor(dictionary=True)
     cursor.execute(
-        "SELECT feeds.id as feed_id , "+
-        "authors.name as nome_authors , authors.avatar, feeds.comentario, feeds.imagem "+
-        "FROM feeds "+
-        "join authors   on   feeds.authors_id = authors.id "+
-		"ORDER BY feeds.id desc "+
-        "AND feeds.id = " + str(feed_id) +
-        " LIMIT  = " + str(5)
-       
+        "SELECT feeds.id as feed_id , " +
+        "authors.name as nome_authors , authors.avatar, feeds.comentario, feeds.imagem, authors.id as authors_id, comentario " +
+        "FROM feeds " +
+        "join authors on feeds.authors_id = authors.id " +
+        "WHERE feeds.id = " + str(feed_id)
+
     )
     registro = cursor.fetchone()
     conexao.close()
 
     if registro:
-     feed = gerar_feed(registro)
- 
+        feed = gerar_feed(registro)
+
     return jsonify(feed)
 
 

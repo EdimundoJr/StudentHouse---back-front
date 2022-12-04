@@ -9,6 +9,7 @@ import { Loading } from '../components/Loading';
 import { HeaderFeed } from '../components/headerFeed';
 import { FooterBar } from '../components/FooterBar';
 import { Header } from '../components/Header';
+import { getFeed, getImagem } from '../api';
 
 
 export function DetailsFeed() {
@@ -24,8 +25,8 @@ export function DetailsFeed() {
     
  async function carregarfeed(feedId, shouldRefresh= false)  {
   setLoading(true)
-  const response = await fetch(`http://localhost:3000/feed?id=${feedId}&_expand=author`)
-  const data = await response.json()
+  const data = await getFeed(feedId)
+  
   
   setFeed(shouldRefresh ? data : [...feed, ...data])
 
@@ -68,7 +69,7 @@ useEffect(()=>{
             style={{width: 50, height: 50, borderRadius:25, marginRight:10}}
             
             alt="avatar"
-            source={{ uri : item.author.avatar}}/>
+            source={getImagem(item.authors.avatar)}/>
             <Text
             style={{color:"#333", fontWeight:"bold", fontSize:20}}
             >{item.author.name}</Text>
@@ -79,7 +80,7 @@ useEffect(()=>{
           style={{width: 500, height: 400}}
           
           alt="imagem"
-          source={{ uri : item.image }} />
+          source={getImagem(item.blobs[0].file)} />
           
           
           <Text

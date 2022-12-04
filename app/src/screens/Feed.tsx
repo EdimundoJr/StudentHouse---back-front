@@ -9,10 +9,11 @@ import { Loading } from '../components/Loading';
 
 import { HeaderFeed } from '../components/HeaderFeed';
 import { FooterBar } from '../components/FooterBar';
+import { getFeed, getFeeds, getImagem } from '../api';
 
 export function Feed() {
   const [feed, setFeed ] = useState([])
-  const [page, setPage ] = useState(1)
+  const [page, setPage ] = useState(0)
   const [total, setTotal ] = useState(0)
   const [loading, setLoading] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
@@ -25,14 +26,14 @@ export function Feed() {
     
     setLoading(true)
 
-    const response = await fetch(`http://localhost:3000/feed?_expand=author&_limit=5&_page=${pageNumber}`)
-
-    const data = await response.json()
-    const totalItens = response.headers.get(`X-Total-Count`)
-
+    const data = await getFeeds(pageNumber)
+  
+    
+    const totalItens = pageNumber
+    console.log(page)
     setTotal(Math.floor(totalItens / 5))
-    setFeed(shouldRefresh ? data : [...feed, ...data])
-    setPage(pageNumber + 1)
+    setFeed(shouldRefresh ? data : [...feed,...data])
+    setPage(pageNumber + 5)
     setLoading(false)
 
   }
@@ -44,7 +45,7 @@ export function Feed() {
 
   async function refreshList(){
     setRefreshing(true)
-    await loadPage(1, true)
+    await loadPage(5, true)
     setRefreshing(false)
   }
 
@@ -77,30 +78,30 @@ export function Feed() {
             style={{width: 50, height: 50, borderRadius:25, marginRight:10}}
             
             alt="avatar"
-            source={{ uri : item.author.avatar}}/>
+            source={getImagem(item.authors.avatar)}/>
             <Text
             style={{color:"#333", fontWeight:"bold", fontSize:20}}
-            >{item.author.name}</Text>
+            >{item.authors.name}</Text>
            
           </Row>
           <TouchableOpacity 
           onPress={()=>
             
-            navigation.navigate('feedDetails',{feedId: item.id})}
+            navigation.navigate('feedDetails',{feedId: item._id})}
           >
           <Image 
       
           style={{width: 400, height: 400, borderBottomRightRadius:50,borderTopRightRadius:50,borderBottomLeftRadius:50, margin:5}}
           
           alt="imagem"
-          source={{ uri : item.image }} />
+          source={getImagem(item.blobs[0].file)} />
           </TouchableOpacity>
           
           <Text
           style={{padding: 10, lineHeight:18}}
           >
             
-          {item.author.name} {": "}
+          {item.authors.name} {": "}
           {item.description}
                            
           </Text>

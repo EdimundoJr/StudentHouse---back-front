@@ -1,6 +1,6 @@
 const IP = 'http://192.168.0.105'
-const FEEDS_URL = `${IP}:5000/`
-const FEED_URL = `${IP}:5000/`
+const FEEDS_URL = `${IP}:5000/feeds/`
+const FEED_URL = `${IP}:5000/feed/`
 
 const ARQUIVOS_URL = `${IP}:5004/`
 
@@ -23,11 +23,11 @@ const acessarUrl = async (url, metodo = 'GET') => {
   return promise
 }
 
-export const getFeeds = async pagina => {
+export const getFeeds = async (pagina) => {
   return acessarUrl(FEEDS_URL + pagina)
 }
 
-export const getFeed = async feedId => {
+export const getFeed = async (feedId) => {
   return acessarUrl(FEED_URL + feedId)
 }
 
