@@ -4,16 +4,16 @@ import { Alert } from 'react-native';
 
 import {  VStack,  Image, FlatList, Text, Row, IconButton,HStack, useTheme} from 'native-base';
 import {   TouchableOpacity } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import {  SignOut, PlusCircle } from 'phosphor-react-native';
 import auth from '@react-native-firebase/auth';
 import { Loading } from '../components/Loading';
 
-import { HeaderFeed } from '../components/HeaderFeed';
+
 import { FooterBar } from '../components/FooterBar';
-import { getFeed, getFeeds, getImagem } from '../api';
+import {  getFeeds, getImagem } from '../api';
 import Logo from '../assets/logo_feed.svg';
-import { FeedDetails } from '../components/FeedDetails';
+
 
 
 export function Feed() {
@@ -49,7 +49,7 @@ export function Feed() {
   
     
     const totalItens = pageNumber
-    console.log(page)
+    
     setTotal(Math.floor(totalItens / 5))
     setFeed(shouldRefresh ? data : [...feed,...data])
     setPage(pageNumber + 5)

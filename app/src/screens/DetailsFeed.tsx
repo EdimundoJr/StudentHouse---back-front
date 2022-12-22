@@ -5,8 +5,7 @@ import { HStack, Image, VStack, FlatList, Text, Row } from 'native-base';
 
 import {   useRoute } from '@react-navigation/native';
 
-import { Loading } from '../components/Loading';
-import { HeaderFeed } from '../components/headerFeed';
+
 import { FooterBar } from '../components/FooterBar';
 import { Header } from '../components/Header';
 import { getFeed, getImagem } from '../api';
@@ -26,11 +25,11 @@ export function DetailsFeed() {
  async function carregarfeed(feedId, shouldRefresh= false)  {
   setLoading(true)
   const data = await getFeed(feedId)
-  
-  
-  setFeed(shouldRefresh ? data : [...feed, ...data])
 
+  setFeed([data])
+  
   setLoading(false)
+  
 }
 
 useEffect(()=>{
@@ -42,6 +41,7 @@ useEffect(()=>{
   setRefreshing(true)
   await carregarfeed(feedId, true)
   setRefreshing(false)
+  
 }
 
     
@@ -53,14 +53,15 @@ useEffect(()=>{
       <HStack
       flex={1}
       >
-      <FlatList
+       
+        <FlatList
       data={feed}
       keyExtractor={post => String(post.id)}
       onRefresh={refreshList}
       refreshing={refreshing}
       renderItem={({ item }) => (
         
-        <VStack marginTop={6}>
+        <VStack >
           <Row
           padding={2}
           alignItems="center"            
@@ -72,7 +73,7 @@ useEffect(()=>{
             source={getImagem(item.authors.avatar)}/>
             <Text
             style={{color:"#333", fontWeight:"bold", fontSize:20}}
-            >{item.author.name}</Text>
+            >{item.authors.name}</Text>
            
           </Row>
           
@@ -80,14 +81,14 @@ useEffect(()=>{
           style={{width: 500, height: 400}}
           
           alt="imagem"
-          source={getImagem(item.blobs[0].file)} />
+          source={getImagem(item.blobs[0].file)}/>
           
           
           <Text
           style={{padding: 10, lineHeight:18}}
           >
             
-          {item.author.name} {": "}
+            {item.authors.name} {": "}
           {item.description}
                            
           </Text>

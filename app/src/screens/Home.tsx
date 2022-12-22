@@ -18,13 +18,20 @@ import { Loading } from '../components/Loading';
 import { Order, OrderProps } from '../components/Order';
 import { FooterBar } from '../components/FooterBar';
 import { HeaderFeed } from '../components/HeaderFeed';
+import { getConta } from '../api';
 
 export function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [statusSelected, setStatusSelected] = useState<'open' | 'closed'>('open');
   const [orders, setOrders] = useState<OrderProps[]>([]);
-
+  const [feed, setFeed ] = useState([])
+  const [page, setPage ] = useState(0)
+  const [total, setTotal ] = useState(0)
+  const [loading, setLoading] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
+ 
   const navigation = useNavigation();
+
   const { colors } = useTheme();
 
   function handleNewOrder() {
@@ -41,7 +48,7 @@ export function Home() {
 
   useEffect(() => {
     setIsLoading(true);
-
+    
     const subscriber = firestore()
       .collection('orders')
       .where('status', '==', statusSelected)

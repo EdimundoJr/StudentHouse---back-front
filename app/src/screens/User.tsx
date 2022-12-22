@@ -9,6 +9,8 @@ import { Header } from '../components/Header';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 
+import { getFeed, getFeed_author, getImagem } from '../api';
+
 
 export function User() {
   const [feed, setFeed ] = useState([])
@@ -16,22 +18,14 @@ export function User() {
   const [loading, setLoading] = useState(false)
   const navigation = useNavigation();
   
-
   
-  
-  const [user, setUser] = useState({
+  const [user, setUser] = useState({})
 
-    "id": 1,
-    "name": "Edimundo_Jr",
-    "avatar": "https://avatars0.githubusercontent.com/u/94170467"
-    
-  })
-  async function carregarfeed(feedId = 1, shouldRefresh= false)  {
+  async function carregarfeed(author_id = 1, shouldRefresh= false)  {
     setLoading(true)
-    const response = await fetch(`http://localhost:3000/feed?&authorId=${feedId}`)
-    const data = await response.json()
+    const data = await getFeed_author(author_id)
     
-    setFeed(shouldRefresh ? data : [...feed, ...data])
+    setFeed([data])
   
     setLoading(false)
   }
@@ -62,18 +56,6 @@ export function User() {
       
       
            
-      <Image 
-      marginBottom={5}
-      style={{width: 150, height:150, borderRadius:100, marginRight:10}}
-      alt="avatar"
-      source={{ uri: user.avatar }} />
-
-      <Text 
-      
-      color="gray.100"
-      style={{ fontWeight:"bold", fontSize:20}}>{user.name}</Text>
-            
-      
       </Center>
       <BlurView
       
@@ -117,7 +99,7 @@ export function User() {
           style={{width: 150, height: 150,borderRadius:10}}
           
           alt="imagem"
-          source={{ uri : item.image }} />
+          source={getImagem(item.blobs[0].file)} />
           </LinearGradient>
           </TouchableOpacity>
           

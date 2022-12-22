@@ -101,6 +101,29 @@ def get_feed(feed_id):
     return jsonify(feed)
 
 
+@servico.route("/feed_author/<int:authors_id>")
+def get_feed_author(authors_id):
+    feed = []
+
+    conexao = get_conexao_bd()
+    cursor = conexao.cursor(dictionary=True)
+    cursor.execute(
+        "SELECT feeds.id as feed_id , " +
+        "authors.name as nome_authors , authors.avatar, feeds.comentario, feeds.imagem , authors.id as authors_id " +
+        "FROM feeds " +
+        "join authors on feeds.authors_id = authors.id " +
+        "WHERE authors.id = " + str(authors_id)
+
+    )
+    registro = cursor.fetchone()
+    conexao.close()
+
+    if registro:
+        feed = gerar_feed(registro)
+
+    return jsonify(feed)
+
+
 @servico.route("/feed/<string:imagem>/<string:comentario>/<string:authors_id>", methods=["POST"])
 def add_feed(imagem,  comentario, authors_id):
     resultado = {
@@ -123,6 +146,49 @@ def add_feed(imagem,  comentario, authors_id):
     conexao.close()
 
     return jsonify(resultado)
+
+
+def gerar_contas(registro):
+    conta = {
+        "_id": registro["id"],
+        "datetime": registro["closed_at"],
+        "datetime2": registro["created_at"],
+        "description": registro["description"],
+        "patrimony": registro["patrimony"],
+        "solution": registro["solution"],
+        "status": registro["status"],
+
+        "authors": {
+            "authors_id": registro["user_id"],
+
+
+        }
+
+    }
+
+    return conta
+
+
+@servico.route("/conta/<int:pagina>")
+def get_contas(pagina):
+    contas = []
+
+    conexao = get_conexao_bd()
+    cursor = conexao.cursor(dictionary=True)
+    cursor.execute(
+        "SELECT * " +
+
+        "FROM financeiro "
+
+
+    )
+    registros = cursor.fetchall()
+    conexao.close()
+
+    for registro in registros:
+        contas.append(gerar_contas(registro))
+
+    return jsonify(contas)
 
 
 if __name__ == "__main__":

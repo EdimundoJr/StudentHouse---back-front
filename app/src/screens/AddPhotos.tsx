@@ -22,10 +22,6 @@ export function AddPhotos() {
   const [comentario, setComentario] = useState(null);
   const navigation = useNavigation();
 
- 
-  
-
-
   const pickImage = async () => {
   
 
@@ -45,7 +41,6 @@ export function AddPhotos() {
   };
   async function uploadImage() {
     addFeeds()
-    console.log(comentario)
     navigation.goBack()
   }
   
