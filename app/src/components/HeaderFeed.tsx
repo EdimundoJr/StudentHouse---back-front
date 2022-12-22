@@ -32,7 +32,7 @@ export function HeaderFeed() {
         justifyContent="space-between"
         alignItems="center"
         bg="gray.600"
-        pt={12}
+        pt={10}
         pb={5}
         px={6}
       >
@@ -40,9 +40,9 @@ export function HeaderFeed() {
           icon={<ArrowLeft
             weight="thin"
             size={26} 
-            color={colors.gray[600]}
+            color={colors.gray[300]}
             />}
-           
+            onPress={handleGoBack}
         />
         <Logo 
         />

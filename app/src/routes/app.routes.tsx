@@ -7,7 +7,7 @@ import { Details } from "../screens/Details";
 import { Register } from "../screens/Register";
 import { User } from '../screens/User';
 import { DetailsFeed } from '../screens/DetailsFeed';
-
+import { AddPhotos } from '../screens/AddPhotos';
 const { Navigator, Screen} = createNativeStackNavigator()
 
 export function AppRoutes(){
@@ -15,6 +15,7 @@ export function AppRoutes(){
   return(
     <Navigator screenOptions={{ headerShown: false}}>
       <Screen name="feed" component={Feed} />
+      <Screen name="addPhotos" component={AddPhotos} />
       <Screen name="feedDetails" component={DetailsFeed} />
       <Screen name="user" component={User} />
       <Screen name="home" component={Home} />

@@ -1,15 +1,20 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
+import { Alert } from 'react-native';
 
-import {  VStack,  Image, FlatList, Text, Row} from 'native-base';
+import {  VStack,  Image, FlatList, Text, Row, IconButton,HStack, useTheme} from 'native-base';
 import {   TouchableOpacity } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-
+import {  SignOut, PlusCircle } from 'phosphor-react-native';
+import auth from '@react-native-firebase/auth';
 import { Loading } from '../components/Loading';
 
 import { HeaderFeed } from '../components/HeaderFeed';
 import { FooterBar } from '../components/FooterBar';
 import { getFeed, getFeeds, getImagem } from '../api';
+import Logo from '../assets/logo_feed.svg';
+import { FeedDetails } from '../components/FeedDetails';
+
 
 export function Feed() {
   const [feed, setFeed ] = useState([])
@@ -17,8 +22,22 @@ export function Feed() {
   const [total, setTotal ] = useState(0)
   const [loading, setLoading] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
+  const { colors } = useTheme()
   const navigation = useNavigation();
 
+
+  function handleGoAddPhotos() {
+    navigation.navigate('addPhotos')
+  }
+
+  function handleLogout() {
+    auth()
+      .signOut()
+      .catch(error => {
+        console.log(error);
+        return Alert.alert('Sair', 'Não foi possível sair.');
+      });
+  }
  
   
   async function loadPage(pageNumber = page, shouldRefresh= false) {
@@ -52,9 +71,34 @@ export function Feed() {
 
     
   return (
-    <VStack flex={1}  pb={0} bg="gray.100">
+    <VStack flex ={1} bg="gray.600">
       
-      <HeaderFeed/>
+      <HStack
+        
+        justifyContent="space-between"
+        alignItems="center"
+        bg="gray.600"
+        pt={10}
+        pb={5}
+        px={6}
+      >
+        <IconButton
+          icon={<PlusCircle
+            weight="thin"
+            size={26} 
+            color={colors.gray[300]}
+            
+            />}
+            onPress={handleGoAddPhotos}
+        />
+        <Logo 
+        />
+
+        <IconButton
+          icon={<SignOut size={26} color={colors.gray[300]} />}
+          onPress={handleLogout}
+        />
+      </HStack>
       
       <FlatList
       data={feed}
@@ -65,16 +109,18 @@ export function Feed() {
       onRefresh={refreshList}
       refreshing={refreshing}
       renderItem={({ item }) => (
-        
+      
         <VStack 
-         
+        bg="gray.100"
           marginTop={6}>
+          
+            
           <Row
           padding={2}
           alignItems="center" 
                     
           >
-            <Image      
+          <Image      
             style={{width: 50, height: 50, borderRadius:25, marginRight:10}}
             
             alt="avatar"
@@ -105,6 +151,7 @@ export function Feed() {
           {item.description}
                            
           </Text>
+        
 
         </VStack>
         )}

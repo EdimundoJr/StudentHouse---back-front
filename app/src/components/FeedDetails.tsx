@@ -10,7 +10,7 @@ type Props = {
   children?: ReactNode;
 }
 
-export function CardDetails({
+export function FeedDetails({
   title,
   description,
   footer = null,

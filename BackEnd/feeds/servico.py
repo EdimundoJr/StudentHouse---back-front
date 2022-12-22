@@ -101,6 +101,30 @@ def get_feed(feed_id):
     return jsonify(feed)
 
 
+@servico.route("/feed/<string:imagem>/<string:comentario>/<string:authors_id>", methods=["POST"])
+def add_feed(imagem,  comentario, authors_id):
+    resultado = {
+        "situacao": "ok",
+        "erro": ""
+    }
+
+    conexao = get_conexao_bd()
+    cursor = conexao.cursor()
+    try:
+        cursor.execute(
+            f"INSERT INTO feeds(imagem, comentario, authors_id) VALUES('{imagem}', '{comentario}', '{authors_id}')")
+        conexao.commit()
+    except Exception as e:
+        conexao.rollback()
+
+        resultado["situacao"] = "erro"
+        resultado["erro"] = f"ocorreu um erro adicionando o post"
+
+    conexao.close()
+
+    return jsonify(resultado)
+
+
 if __name__ == "__main__":
     servico.run(
         host="0.0.0.0",
